@@ -19,7 +19,8 @@ const get: NextApiHandler = async (req, res) => {
     return;
   }
 
-  renderOk(res, { result: fizzbuzz(parsed.data.n) });
+  const result = fizzbuzz(parsed.data.n);
+  renderOk(res, { result });
 };
 
 const FizzbuzzBatchRequestSchema = z.object({
@@ -33,18 +34,17 @@ const batch: NextApiHandler = async (req, res) => {
     renderBadRequest(res);
     return;
   }
+  const results = parsed.data.numbers.reduce<Record<number, string>>(
+    (prev, current) => {
+      if (prev[current]) return prev;
 
-  renderOk(res, {
-    results: parsed.data.numbers.reduce<Record<number, string>>(
-      (prev, current) => {
-        if (prev[current]) return prev;
+      prev[current] = fizzbuzz(current);
+      return prev;
+    },
+    {}
+  );
 
-        prev[current] = fizzbuzz(current);
-        return prev;
-      },
-      {}
-    ),
-  });
+  renderOk(res, { results });
 };
 
 export const fizzbuzzHandler = buildHandlers({ get });
