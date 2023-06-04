@@ -2,6 +2,7 @@ import { NextApiHandler, NextApiResponse } from "next";
 
 export type Handlers = {
   get?: NextApiHandler;
+  post?: NextApiHandler;
 };
 
 export const buildHandlers = (handlers: Handlers): NextApiHandler => {
@@ -9,6 +10,9 @@ export const buildHandlers = (handlers: Handlers): NextApiHandler => {
     switch (req.method) {
       case "GET":
         if (handlers.get) return handlers.get(req, res);
+        break;
+      case "POST":
+        if (handlers.post) return handlers.post(req, res);
         break;
     }
 

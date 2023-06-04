@@ -1,3 +1,3 @@
-import handler from "@/src/api/fizzbuzz";
+import { fizzbuzzHandler } from "@/src/api/fizzbuzz";
 
-export default handler;
+export default fizzbuzzHandler;
