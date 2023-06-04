@@ -3,16 +3,23 @@ import { fizzbuzz } from "@/src/lib/fizzbuzz";
 import { NextApiHandler } from "next";
 import { z } from "zod";
 
+const FizzbuzzRequestSchema = z.object({
+  n: z.preprocess((val) => {
+    const n = Number(val);
+    if (Number.isNaN(n)) return val;
+    return n;
+  }, z.number()),
+});
+
 // GET /api/v1/fizzbuzz/:n
 const get: NextApiHandler = async (req, res) => {
-  const { n } = req.query;
-  const nAsNumber = Number(n);
-  if (Number.isNaN(nAsNumber)) {
+  const parsed = FizzbuzzRequestSchema.safeParse(req.query);
+  if (!parsed.success) {
     renderBadRequest(res);
     return;
   }
 
-  renderOk(res, { result: fizzbuzz(nAsNumber) });
+  renderOk(res, { result: fizzbuzz(parsed.data.n) });
 };
 
 const FizzbuzzBatchRequestSchema = z.object({
